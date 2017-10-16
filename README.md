@@ -46,13 +46,13 @@ Install Docker Engine on all 3 of them.
 
 Here I am showing Docker CE(Community Editon) installation steps for ubuntu since our hosts are ubuntu machines.
 
-	SET UP THE REPOSITORY
+	1.SET UP THE REPOSITORY
 		
-		Update the apt package index:
+		a. Update the apt package index:
 			```
 			sudo apt-get update
 			```
-		Install packages to allow apt to use a repository over HTTPS:
+		b. Install packages to allow apt to use a repository over HTTPS:
 			Jessie or Stretch:
 				```
 				sudo apt-get install \
@@ -70,11 +70,11 @@ Here I am showing Docker CE(Community Editon) installation steps for ubuntu sinc
      				curl \
      				python-software-properties
      			```
-     	Add Docker’s official GPG key:
+     		c. Add Docker’s official GPG key:
      		```
      			curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | sudo apt-key add -
      		```
-     	Use the following command to set up the stable repository. 
+     		d. Use the following command to set up the stable repository. 
      		x86_64:
      		```
      			sudo add-apt-repository \
@@ -82,39 +82,39 @@ Here I am showing Docker CE(Community Editon) installation steps for ubuntu sinc
      				$(lsb_release -cs) \ 
      				stable"
      		```
-    INSTALL DOCKER CE
-    	Update the apt package index.
+    2. INSTALL DOCKER CE
+    	a. Update the apt package index.
     		```
     			sudo apt-get update
     		```
-    	Install the latest version of Docker CE, or go to the next step to install a specific version.   
+    	b. Install the latest version of Docker CE, or go to the next step to install a specific version.   
     	Any existing installation of Docker is replaced.
     		```
     			sudo apt-get install docker-ce
     		```
-    	Verify that Docker CE is installed correctly by running the hello-world image.
+    	c. Verify that Docker CE is installed correctly by running the hello-world image.
     		```
     			sudo docker run hello-world
     		```
-    Manage Docker as a non-root user
-    	Create the docker group.
+    3. Manage Docker as a non-root user
+    	a. Create the docker group.
     		```
     			sudo groupadd docker
     		```
-    	Add your user to the docker group.
+    	b. Add your user to the docker group.
     		```
     			sudo usermod -aG docker $USER
     		```
-    	Log out and log back in so that your group membership is re-evaluated.
-    	Verify that you can run docker commands without sudo.
+    	c. Log out and log back in so that your group membership is re-evaluated.
+    	d. Verify that you can run docker commands without sudo.
     		```
     			docker run hello-world
     		```
-    Configure Docker to start on boot
+    4. Configure Docker to start on boot
     	```
     		sudo systemctl enable docker
     	```
-    To disable this behavior, use disable instead.
+    5. To disable this behavior, use disable instead.
     	```
     		sudo systemctl disable docker
     	```
