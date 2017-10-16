@@ -226,9 +226,74 @@ The following ports must be allowed on security group for the instances
 3. Even though the service no longer exists, the task containers take a few seconds to clean up.   
 	You can use docker ps on the nodes to verify when the tasks have been removed.
 
+###### Apply rolling updates to a service
 
+1. Open a terminal and ssh into the machine worker1
+2. Deploy Redis 3.0.6 to the swarm and configure the swarm with a 10 second update delay:
+	```
+		docker service create \
+  			--replicas 3 \
+  			--name redis \
+  			--update-delay 10s \
+  			redis:3.0.6
+	```
+	a. You configure the rolling update policy at service deployment time.
+	b. The --update-delay flag configures the time delay between updates to a service task or sets of tasks. You can   		describe the time T as a combination of the number of seconds Ts, minutes Tm, or hours Th. So 10m30s indicates 		    a 10 minute 30 second delay.
+	c. By default the scheduler updates 1 task at a time. Use --update-parallelism flag to change this behaviour.
+	d. If, at any time during an update a task returns FAILED, the scheduler pauses the update. 
+	   --update-failure-action flag to control this behaviour.
+3. Inspect the redis service:
+	```
+		docker service inspect --pretty redis
+	```
+4. Now you can update the container image for redis. The swarm manager applies the update to nodes according to the 	     	UpdateConfig policy:
+	```
+		docker service update --image redis:3.0.7 redis
+	```
+5. Run docker service inspect --pretty redis to see the new image in the desired state:
+	```
+		docker service inspect --pretty redis
+	```
+	a. The output of service inspect shows if your update paused due to failure:
+	b. To restart a paused update run docker service update <SERVICE-ID>
+		```
+			docker service update redis
+		```
+6. Run docker service ps <SERVICE-ID> to watch the rolling update:
+	```
+		docker service ps redis
+	```
+	* Before Swarm updates all of the tasks, you can see that some are running redis:3.0.6 while others are running 	  redis:3.0.7 *
 
+###### Drain a node on the swarm
 
+1. Open a terminal and ssh into the machine worker1
+2. Verify that all your nodes are actively available.
+	```
+		docker node ls
+	```
+3. Run docker service ps redis to see how the swarm manager assigned the tasks to different nodes:
+	```
+		docker service ps redis
+	```
+4. Run docker node update --availability drain <NODE-ID> to drain a node that had a task assigned to it:
+	```
+		docker node update --availability drain worker1
+	```
+5. Inspect the node to check its availability:
+	```
+		docker node inspect --pretty worker1
+	```
+	* The drained node shows Drain for AVAILABILITY.
+6. Run docker service ps redis to see how the swarm manager updated the task assignments for the redis service:
+7. Run docker node update --availability active <NODE-ID> to return the drained node to an active state:
+	```
+		docker node update --availability active worker1
+	```
+8. Inspect the node to see the updated state:
+	```
+		docker node inspect --pretty worker1
+	```
 
 
 
